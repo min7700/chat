@@ -1,23 +1,14 @@
-var app = require('http').createServer(handler)
-  , io = require('socket.io').listen(app)
-  , fs = require('fs');
+var express = require('express')
+  , app = express()
+  , server = require('http').createServer(app);
+  , io = require('socket.io')(server);
  
 var port = process.env.PORT || process.argv[2];
 console.log("Listening on " + port);
  
-app.listen(port);
+server.listen(port);
  
-function handler (req, res) {
-  fs.readFile(__dirname + '/index.html',
-  function (err, data) {
-    if (err) {
-      res.writeHead(500);
-      return res.end('Error loading index.html');
-    }
-    res.writeHead(200);
-    res.end(data);
-  });
-}
+app.use(express.static(__dirname + '/public')); 
  
 //If you are using RedisToGo with Heroku
 if (process.env.REDISTOGO_URL) {
