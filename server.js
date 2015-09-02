@@ -35,14 +35,12 @@ io.sockets.on('connection', function (client) {
   });
 
   client.on('message', function(msg) {
-    console.log(msg);
-    if(msg.type == "chat"){
-            redis2.publish("emrchat",msg.message);
-    }
-    else if(msg.type == "setUsername"){
-            redis2.publish("emrchat", "A New User is connected : " + msg.user);
-            redis3.sadd("onlineUsers",msg.user);
-    }
+    redis2.publish("emrchat",msg.message);
+  });
+
+  client.on('add user', function(msg) {
+    redis2.publish("emrchat", "A New User is connected : " + msg.user);
+    redis3.sadd("onlineUsers",msg.user);
   });
 
   client.on('disconnect', function() {
