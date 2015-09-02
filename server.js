@@ -38,7 +38,7 @@ io.sockets.on('connection', function (client) {
     redis2.publish("emrchat",message);
   });
 
-  client.on('add user', function(msg) {
+  client.on('add user', function(user) {
     redis2.publish("emrchat", "A New User is connected : " + user);
     redis3.sadd("onlineUsers",user);
   });
