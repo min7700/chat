@@ -21,14 +21,13 @@ console.log("Listening on " + port);
 server.listen(port);
  
 app.use(express.static(__dirname + '/public')); 
- 
-io.configure(function(){
-    io.set('store', new RedisStore({
-        redisPub: pub,
-        redisSub : sub,
-        redisClient : client
-    }));
-});
+
+io.set('store', new RedisStore({
+  redisPub: pub,
+  redisSub : sub,
+  redisClient : client
+}));
+
 
 io.sockets.on('connection', function (sockets) {
   redis1.subscribe("emrchat");
