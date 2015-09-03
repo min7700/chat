@@ -36,7 +36,7 @@ io.sockets.on('connection', function (client) {
       else if(msg.type == "add user"){
       
           // add the client's username to the global list
-          usernames[username] = username;
+          usernames[msg.user] = msg.user;
           ++numUsers;
           addedUser = true;
 
