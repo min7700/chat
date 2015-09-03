@@ -241,6 +241,7 @@ $(function() {
 
   // Whenever the server emits 'new message', update the chat body
   socket.on('message', function (data) {
+alert(data.type);
     if(data.type == "user joined") {
       log(data.username + ' joined');
       addParticipantsMessage(data);
