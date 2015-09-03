@@ -14,8 +14,14 @@ app.use(express.static(__dirname + '/public'));
 var store = redis.createClient();
 var pub = redis.createClient();
 var sub = redis.createClient();
- 
+
+// usernames which are currently connected to the chat
+var usernames = {};
+var numUsers = 0;
+
 io.sockets.on('connection', function (client) {
+  var addedUser = false;
+
   sub.subscribe("chatting");
 
   sub.on("message", function (channel, message) {
@@ -28,6 +34,18 @@ io.sockets.on('connection', function (client) {
           pub.publish("chatting", msg.message);
       }
       else if(msg.type == "add user"){
+          // we store the username in the socket session for this client
+          socket.username = username;
+       
+          // add the client's username to the global list
+          usernames[username] = username;
+          ++numUsers;
+          addedUser = true;
+
+          socket.emit('login', {
+            numUsers: numUsers
+          });
+
           pub.publish("chatting","A new user in connected:" + msg.user);
           store.sadd("onlineUsers",msg.user);
       }
