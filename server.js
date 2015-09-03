@@ -18,24 +18,29 @@ io.sockets.on('connection', function (socket) {
   
   pub.subscribe("emrchat");
   
-    pub.on("message", function(channel, message) {
-      console.log(channel + " | " + message);
-      socket.send(message);
-    });
+  pub.on("message", function(channel, message) {
+    console.log("1 | " + message);
+    socket.send(message);
+  });
 
-    socket.on('message', function(msg) {
-      //console.log(msg);
-      if(msg.type == "chat"){
-        sub.publish("emrchat",msg.message);  
-      }
-      else if(msg.type == "setUsername"){
-        sub.publish("emrchat", JSON.stringify({type:"user joined", username:msg.user}));
-        client.sadd("onlineUsers",msg.user);
-      }
-    });
+  pub.on("setUsername", function(channel, message) {
+    console.log("1 | " + message);
+    socket.send(message);
+  });
 
-    client.on('disconnect', function() {
-        pub.quit();
-        sub.publish("emrchat","User is disconnected : " + client.id);
-    });
+  socket.on('message', function(msg) {
+    console.log("2"+msg);
+    if(msg.type == "chat"){
+      sub.publish("emrchat",msg.message);  
+    }
+    else if(msg.type == "setUsername"){
+      sub.publish("emrchat", JSON.stringify({type:"user joined", username:msg.user}));
+      client.sadd("onlineUsers",msg.user);
+    }
+  });
+
+  client.on('disconnect', function() {
+      pub.quit();
+      sub.publish("emrchat","User is disconnected : " + client.id);
+  });
 });
