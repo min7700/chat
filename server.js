@@ -29,8 +29,13 @@ io.sockets.on('connection', function (socket) {
     else if(msg.type == "setUsername"){
       client.sadd("onlineUsers",msg.user);
  
-      var tot = client.smembers("onlineUsers");
-      console.log(tot);
+      vat tot = 0;
+      client.smembers("onlineUsers", function (err, replies) {
+        if(!err){
+          callback(replies);
+        }
+        tot = replies.length;
+      })
       sub.publish("emrchat", JSON.stringify({type:"user joined ", numUsers:tot, username:msg.user}));
     }
   });
