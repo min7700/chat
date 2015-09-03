@@ -19,7 +19,8 @@ io.sockets.on('connection', function (socket) {
   pub.subscribe("emrchat");
   
     pub.on("message", function(channel, message) {
-        socket.send(message);
+      console.log(message);
+      socket.send(message);
     });
 
     socket.on('message', function(msg) {
