@@ -46,8 +46,8 @@ $(function() {
       $loginPage.off('click');
       $currentInput = $inputMessage.focus();
 
-      // Tell the server your username
-      socket.emit('add user', username);
+      var msg = {type:'add user',user:username};
+      socket.json.send(msg);
     }
   }
 
@@ -64,7 +64,9 @@ $(function() {
         message: message
       });
       // tell server to execute 'new message' and send along one parameter
-      socket.emit('message', message);
+
+      var msg = {type:'message', message};
+      socket.json.send(msg);    
     }
   }
 

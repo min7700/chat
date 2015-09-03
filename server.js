@@ -1,19 +1,8 @@
-var redisInfo = {
-    host: '127.0.01',
-    port: 6379
-};
-
 var express = require('express')
   , app = express()
   , server = require('http').createServer(app)
-  , io = require('socket.io')(server);
-
-//If you are using your own Redis server
-var redis = require('redis');
-var socketIORedis = require('socket.io-redis');
-var pub = redis.createClient(redisInfo.port, redisInfo.host);
-var sub = redis.createClient(redisInfo.port, redisInfo.host);
-var client = redis.createClient(redisInfo.port, redisInfo.host);
+  , io = require('socket.io')(server)
+  , redis = require('redis');
 
 var port = process.env.PORT || process.argv[2];
 console.log("Listening on " + port);
@@ -22,36 +11,30 @@ server.listen(port);
  
 app.use(express.static(__dirname + '/public')); 
 
-io.adapter(socketIORedis(redisInfo));
+var store = redis.createClient();
+var pub = redis.createClient();
+var sub = redis.createClient();
+ 
+io.sockets.on('connection', function (client) {
+  sub.subscribe("chatting");
 
-pub.subscribe("emrchat");
-
-pub.on('message', function(channel, message) {
-  io.emit(channel, message);
-});
-
-io.sockets.on('connection', function (socket) {
-  pub.on("message", function(channel, message) {
-      console.log(channel + " || " + message);
-      //socket.send(message);
+  sub.on("message", function (channel, message) {
+      console.log("message received on server from publish");
+      client.send(message);
   });
 
-  socket.on('message', function(data){
-      socket.broadcast.emit('message', data);
+  client.on("message", function (msg) {
+      if(msg.type == "chat"){
+          pub.publish("chatting",msg.message);
+      }
+      else if(msg.type == "setUsername"){
+          pub.publish("chatting","A new user in connected:" + msg.user);
+          store.sadd("onlineUsers",msg.user);
+      }
   });
 
-  /*
-  sockets.on('message', function(msg) {
-    redis2.publish("emrchat",message);
+  client.on('disconnect', function () {
+      sub.quit();
+      pub.publish("chatting","User is disconnected :" + client.id);
   });
-
-  sockets.on('add user', function(user) {
-    redis2.publish("emrchat", "A New User is connected : " + user);
-    redis3.sadd("onlineUsers",user);
-  });
-
-  sockets.on('disconnect', function() {
-    redis1.quit();
-    redis2.publish("emrchat","User is disconnected : " + sockets.id);
-  });*/
 });
