@@ -46,7 +46,7 @@ $(function() {
       $loginPage.off('click');
       $currentInput = $inputMessage.focus();
 
-      var msg = {type:'add user',user:username};
+      var msg = {type:'add user', user:username};
       socket.json.send(msg);
     }
   }
@@ -65,7 +65,7 @@ $(function() {
       });
       // tell server to execute 'new message' and send along one parameter
 
-      var msg = {type:'chat', message};
+      var msg = {type:'chat', message:username+" : "+message};
       socket.json.send(msg);    
     }
   }
