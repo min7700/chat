@@ -24,18 +24,23 @@ app.use(express.static(__dirname + '/public'));
 
 io.adapter(socketIORedis(redisInfo));
 
+pub.subscribe("emrchat");
+
+pub.on('message', function(channel, message) {
+  io.emit(channel, message);
+});
+
 io.sockets.on('connection', function (socket) {
-    socket.on('message', function(data){
-        socket.broadcast.emit('message', data);
-    });
-
-  /*redis1.subscribe("emrchat");
-
-  redis1.on("message", function(channel, message) {
+  pub.on("message", function(channel, message) {
       console.log(channel + " || " + message);
-      sockets.send(message);
+      //socket.send(message);
   });
 
+  socket.on('message', function(data){
+      socket.broadcast.emit('message', data);
+  });
+
+  /*
   sockets.on('message', function(msg) {
     redis2.publish("emrchat",message);
   });
