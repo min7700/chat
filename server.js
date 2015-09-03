@@ -31,10 +31,7 @@ io.sockets.on('connection', function (client) {
   redis1.subscribe("emrchat");
 
   redis1.on("message", function(channel, message) {
-      client.send(message);
-  });
-
-  redis1.on("add user", function(channel, message) {
+      console.log(channel + " || " + message);
       client.send(message);
   });
 
