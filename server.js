@@ -19,7 +19,7 @@ io.sockets.on('connection', function (socket) {
   pub.subscribe("emrchat");
   
     pub.on("message", function(channel, message) {
-      console.log(message);
+      console.log(channel + " | " + message);
       socket.send(message);
     });
 
