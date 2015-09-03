@@ -16,10 +16,11 @@ server.listen(port);
 app.use(express.static(__dirname + '/public')); 
  
 //If you are using your own Redis server
+var redis = require('redis');
 var RedisStore = require('socket.io-redis');
-var pub = require("redis").createClient(redisInfo.port, redisInfo.host);
-var sub = require("redis").createClient(redisInfo.port, redisInfo.host);
-var client = require("redis").createClient(redisInfo.port, redisInfo.host);
+var pub = redis.createClient(redisInfo.port, redisInfo.host);
+var sub = redis.createClient(redisInfo.port, redisInfo.host);
+var client = redis.createClient(redisInfo.port, redisInfo.host);
 
 io.configure(function(){
     io.set('store', new RedisStore({
