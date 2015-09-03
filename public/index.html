@@ -1,55 +1,28 @@
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-    <title>EmrChat</title>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+  <meta charset="UTF-8">
+  <title>AFREECA.TV</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="username">
-    <input type="text" name="usernameTxt" /> <input type="button" name="setUsername" value="Set Username" />
-  </div>
-  <div id="sendChat" style="display:none;">
-    <input type="text" name="chatTxt" /> <input type="button" name="sendBtn" value="Send" />
-  </div>
-  <br />
-    <div id="content"></div>
-    <script>    
-        $(document).ready(function() {
-      var username = "anonymous";
-      
-      $('input[name=setUsername]').click(function(){
-        if($('input[name=usernameTxt]').val() != ""){
-          username = $('input[name=usernameTxt]').val();
-          var msg = {type:'setUsername',user:username};
-          socket.json.send(msg);
-        }
-        $('#username').slideUp("slow",function(){
-          $('#sendChat').slideDown("slow");
-        });
-      });
-      
-            var socket = new io.connect();
-            var content = $('#content');
+  <ul class="pages">
+    <li class="chat page">
+      <div class="chatArea">
+        <ul class="messages"></ul>
+      </div>
+      <input class="inputMessage" placeholder="Type here..."/>
+    </li>
+    <li class="login page">
+      <div class="form">
+        <h3 class="title">What's your nickname?</h3>
+        <input class="usernameInput" type="text" maxlength="14" />
+      </div>
+    </li>
+  </ul>
 
-            socket.on('connect', function() {
-        console.log("Connected");
-            });
-
-            socket.on('message', function(message){
-                content.append(message + '<br />');
-            }) ;
-
-            socket.on('disconnect', function() {
-                console.log('disconnected');
-                content.html("<b>Disconnected!</b>");
-            });
-
-      $("input[name=sendBtn]").click(function(){
-        var msg = {type:'chat',message:username + " : " +  $("input[name=chatTxt]").val()}
-        socket.json.send(msg);
-        $("input[name=chatTxt]").val("");
-      });
-        });
-    </script>
+  <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/main.js"></script>
 </body>
 </html>

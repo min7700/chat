@@ -23,7 +23,7 @@ $(function() {
   var lastTypingTime;
   var $currentInput = $usernameInput.focus();
 
-  var socket = new io.connect('http://daddycandle.com:3001');
+  var socket = new io.connect();
 
   function addParticipantsMessage (data) {
     var message = '';
@@ -46,7 +46,7 @@ $(function() {
       $loginPage.off('click');
       $currentInput = $inputMessage.focus();
 
-      var msg = {type:'add user', user:username};
+      var msg = {type:'setUsername', user:username};
       socket.json.send(msg);
     }
   }
