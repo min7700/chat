@@ -52,7 +52,7 @@ $(function() {
   }
 
   // Sends a chat message
-  function sendMessage () {
+  function sendMessage () {alert(1);
     var message = $inputMessage.val();
     // Prevent markup from being injected into the message
     message = cleanInput(message);
