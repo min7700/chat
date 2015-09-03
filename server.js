@@ -30,7 +30,7 @@ io.sockets.on('connection', function (socket) {
       client.sadd("onlineUsers", msg.user);
  
       var tot = client.scard("onlineUsers");
-      sub.publish("emrchat", JSON.stringify({type:"user joined ", numUsers:tot, username:msg.user}));
+      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:tot, username:msg.user}));
     }
   });
 
