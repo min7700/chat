@@ -30,7 +30,11 @@ io.set('store', new RedisStore({
 
 
 io.sockets.on('connection', function (sockets) {
-  redis1.subscribe("emrchat");
+    socket.on('message', function(data){
+        socket.broadcast.emit('message', data);
+    });
+
+  /*redis1.subscribe("emrchat");
 
   redis1.on("message", function(channel, message) {
       console.log(channel + " || " + message);
@@ -49,5 +53,5 @@ io.sockets.on('connection', function (sockets) {
   sockets.on('disconnect', function() {
     redis1.quit();
     redis2.publish("emrchat","User is disconnected : " + sockets.id);
-  });
+  });*/
 });
