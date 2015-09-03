@@ -10,11 +10,11 @@ var express = require('express')
 
 //If you are using your own Redis server
 var redis = require('redis');
-var RedisStore = require('socket.io-redis');
+var socketIORedis = require('socket.io-redis');
 var pub = redis.createClient(redisInfo.port, redisInfo.host);
 var sub = redis.createClient(redisInfo.port, redisInfo.host);
 var client = redis.createClient(redisInfo.port, redisInfo.host);
- 
+
 var port = process.env.PORT || process.argv[2];
 console.log("Listening on " + port);
  
@@ -22,12 +22,7 @@ server.listen(port);
  
 app.use(express.static(__dirname + '/public')); 
 
-io.set('store', new RedisStore({
-  redisPub: pub,
-  redisSub : sub,
-  redisClient : client
-}));
-
+io.adapter(socketIORedis(redisInfo));
 
 io.sockets.on('connection', function (socket) {
     socket.on('message', function(data){
