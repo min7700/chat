@@ -44,13 +44,13 @@ io.sockets.on('connection', function (client) {
             numUsers: numUsers
           });
 
-          pub.publish("chatting","A new user in connected:" + msg.user);
-          store.sadd("onlineUsers",msg.user);
+          pub.publish("chatting", "A new user in connected:" + msg.user);
+          store.sadd("onlineUsers", msg.user);
       }
   });
 
   client.on('disconnect', function () {
       sub.quit();
-      pub.publish("chatting","User is disconnected :" + client.id);
+      pub.publish("chatting", "User is disconnected :" + client.id);
   });
 });

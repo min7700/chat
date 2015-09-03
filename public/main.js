@@ -23,7 +23,7 @@ $(function() {
   var lastTypingTime;
   var $currentInput = $usernameInput.focus();
 
-  var socket = io();
+  var socket = new io.connect('http://daddycandle.com');
 
   function addParticipantsMessage (data) {
     var message = '';
@@ -54,10 +54,10 @@ $(function() {
   // Sends a chat message
   function sendMessage () {
     var message = $inputMessage.val();
-    alert(1);
+
     // Prevent markup from being injected into the message
     message = cleanInput(message);
-    alert(2);
+
     // if there is a non-empty message and a socket connection
     if (message && connected) {
       $inputMessage.val('');
@@ -65,8 +65,8 @@ $(function() {
         username: username,
         message: message
       });
+
       // tell server to execute 'new message' and send along one parameter
-alert(3);
       var msg = {type:'chat', message:username+" : "+message};
       socket.json.send(msg);    
     }
