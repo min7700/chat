@@ -1,72 +1,62 @@
-/*var express = require('express')
-  , app = express()
-  , server = require('http').createServer(app)
-  , io = require('socket.io')(server)
-  , redis = require('redis');*/
+var app = require('http').createServer(handler)
+  , io = require('socket.io').listen(app)
+  , fs = require('fs');
 
-var app = require('http').createServer(handler);
-var io = require('socket.io').listen(app);
-var redis = require('redis');
-var fs = require('fs');
-
-var port = process.env.PORT || process.argv[2];
+var port = process.env.PORT || 5000;
 console.log("Listening on " + port);
  
 app.listen(port);
- 
-//app.use(express.static(__dirname + '/public')); 
 
-function handler(req,res){
-    fs.readFile(__dirname + '/public/index.html', function(err,data){
-        if(err){
-            res.writeHead(500);
-            return res.end('Error loading index.html');
-        }
-        res.writeHead(200);
-        res.end(data);
-    });
+function handler (req, res) {
+  fs.readFile(__dirname + '/public/index.html',
+  function (err, data) {
+    if (err) {
+      res.writeHead(500);
+      return res.end('Error loading index.html');
+    }
+    res.writeHead(200);
+    res.end(data);
+  });
 }
 
-var store = redis.createClient();
-var pub = redis.createClient();
-var sub = redis.createClient();
+//If you are using RedisToGo with Heroku
+if (process.env.REDISTOGO_URL) {
+  var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+  var redis1 = require("redis").createClient(rtg.port, rtg.hostname);
+  var redis2 = require("redis").createClient(rtg.port, rtg.hostname);
+  var redis3 = require("redis").createClient(rtg.port, rtg.hostname);
 
-// usernames which are currently connected to the chat
-var usernames = {};
-var numUsers = 0;
+  redis1.auth(rtg.auth.split(":")[1]);
+  redis2.auth(rtg.auth.split(":")[1]);
+  redis3.auth(rtg.auth.split(":")[1]);
+} else {
+  //If you are using your own Redis server
+    var redis1 = require("redis").createClient();
+  var redis2 = require("redis").createClient();
+  var redis3 = require("redis").createClient();
+}
 
 io.sockets.on('connection', function (client) {
-  var addedUser = false;
+  
+  redis1.subscribe("emrchat");
+  
+    redis1.on("message", function(channel, message) {
+        client.send(message);
+    });
 
-  sub.subscribe("chatting");
+    client.on('message', function(msg) {
+    console.log(msg);
+    if(msg.type == "chat"){
+      redis2.publish("emrchat",msg.message);  
+    }
+    else if(msg.type == "setUsername"){
+      redis2.publish("emrchat", "A New User is connected : " + msg.user);
+      redis3.sadd("onlineUsers",msg.user);
+    }
+    });
 
-  sub.on("message", function (channel, message) {
-      console.log("message received on server from publish");
-      client.send(message);
-  });
-
-  client.on("message", function (msg) {
-      if(msg.type == "chat"){
-          pub.publish("chatting", msg.message);
-      }
-      else if(msg.type == "add user"){
-      
-          // add the client's username to the global list
-          usernames[msg.user] = msg.user;
-          ++numUsers;
-          addedUser = true;
-
-          client.emit('login', {
-            numUsers: numUsers
-          });
-
-          pub.publish("chatting", "A new user in connected:" + msg.user);
-          store.sadd("onlineUsers", msg.user);
-      }
-  });
-
-  client.on('disconnect', function () {
-      sub.quit();
-      pub.publish("chatting", "User is disconnected :" + client.id);
-  });
+    client.on('disconnect', function() {
+        redis1.quit();
+        redis2.publish("emrchat","User is disconnected : " + client.id);
+    });
 });
