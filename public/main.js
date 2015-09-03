@@ -227,26 +227,24 @@ $(function() {
     $inputMessage.focus();
   });
 
-  //## Socket events
-  // Whenever the server emits 'login', log the login message
-  socket.on('login', function (data) {
-    connected = true;
-    // Display the welcome message
-    var message = "Welcome to AFREECA.TV Chat – ";
-    log(message, {
-      prepend: true
-    });
-    addParticipantsMessage(data);
-  });
-
   // Whenever the server emits 'new message', update the chat body
   socket.on('message', function (data) {
     var msg = JSON.parse(data);
 
     if(msg.type == "user joined") {
-      log(msg.username + ' joined');
-      addParticipantsMessage(msg);
-    } else if(msg.type == "user joined") {
+      if(username == msg.username) {
+        connected = true;
+        // Display the welcome message
+        var message = "Welcome to AFREECA.TV Chat – ";
+        log(message, {
+          prepend: true
+        });
+        addParticipantsMessage(data);
+      } else {
+        log(msg.username + ' joined');
+        addParticipantsMessage(msg);
+      }
+    } else if(msg.type == "message") {
       addChatMessage(msg);
     }
   });
