@@ -40,7 +40,7 @@ io.sockets.on('connection', function (client) {
           ++numUsers;
           addedUser = true;
 
-          socket.emit('login', {
+          client.emit('login', {
             numUsers: numUsers
           });
 
