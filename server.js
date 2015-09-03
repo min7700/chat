@@ -1,15 +1,31 @@
-var express = require('express')
+/*var express = require('express')
   , app = express()
   , server = require('http').createServer(app)
   , io = require('socket.io')(server)
-  , redis = require('redis');
+  , redis = require('redis');*/
+
+var app = require('http').createServer(handler);
+var io = require('socket.io').listen(app);
+var redis = require('redis');
+var fs = require('fs');
 
 var port = process.env.PORT || process.argv[2];
 console.log("Listening on " + port);
  
-server.listen(port);
+app.listen(port);
  
-app.use(express.static(__dirname + '/public')); 
+//app.use(express.static(__dirname + '/public')); 
+
+function handler(req,res){
+    fs.readFile(__dirname + '/public', function(err,data){
+        if(err){
+            res.writeHead(500);
+            return res.end('Error loading index.html');
+        }
+        res.writeHead(200);
+        res.end(data);
+    });
+}
 
 var store = redis.createClient();
 var pub = redis.createClient();
