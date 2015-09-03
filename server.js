@@ -6,7 +6,7 @@ var express = require('express')
 var port = process.env.PORT || 5000;
 console.log("Listening on " + port);
  
-app.listen(port);
+server.listen(port);
 
 app.use(express.static(__dirname + '/public')); 
 
