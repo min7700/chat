@@ -241,14 +241,12 @@ $(function() {
 
   // Whenever the server emits 'new message', update the chat body
   socket.on('message', function (data) {
-    console.log(data);
-    addChatMessage(data);
-  });
-
-  // Whenever the server emits 'user joined', log it in the chat body
-  socket.on('user joined', function (data) {
-    log(data.username + ' joined');
-    addParticipantsMessage(data);
+    if(data.type == "user joined") {
+      log(data.username + ' joined');
+      addParticipantsMessage(data);
+    } else if(data.type == "user joined") {
+      addChatMessage(data);
+    }
   });
 
   // Whenever the server emits 'user left', log it in the chat body

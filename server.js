@@ -19,17 +19,10 @@ io.sockets.on('connection', function (socket) {
   pub.subscribe("emrchat");
   
   pub.on("message", function(channel, message) {
-    console.log("1 | " + message);
-    socket.send(message);
-  });
-
-  pub.on("setUsername", function(channel, message) {
-    console.log("1 | " + message);
     socket.send(message);
   });
 
   socket.on('message', function(msg) {
-    console.log("2"+msg);
     if(msg.type == "chat"){
       sub.publish("emrchat",msg.message);  
     }
