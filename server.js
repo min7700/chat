@@ -16,10 +16,18 @@ server.listen(port);
 app.use(express.static(__dirname + '/public')); 
  
 //If you are using your own Redis server
-var store = require('store');
+var RedisStore = require('socket.io-redis');
 var pub = require("redis").createClient(redisInfo.port, redisInfo.host);
 var sub = require("redis").createClient(redisInfo.port, redisInfo.host);
 var client = require("redis").createClient(redisInfo.port, redisInfo.host);
+
+io.configure(function(){
+    io.set('store', new RedisStore({
+        redisPub: pub,
+        redisSub : sub,
+        redisClient : client
+    }));
+});
 
 io.sockets.on('connection', function (sockets) {
   redis1.subscribe("emrchat");
