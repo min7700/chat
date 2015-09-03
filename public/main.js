@@ -241,7 +241,7 @@ $(function() {
 
   // Whenever the server emits 'new message', update the chat body
   socket.on('message', function (data) {
-    alert('message');
+    console.log(data);
     addChatMessage(data);
   });
 
