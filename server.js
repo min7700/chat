@@ -29,7 +29,7 @@ io.sockets.on('connection', function (socket) {
     else if(msg.type == "setUsername"){
       client.sadd("onlineUsers",msg.user);
  
-      vat tot = 0;
+      var tot = 0;
       client.smembers("onlineUsers", function (err, replies) {
         if(!err){
           callback(replies);
