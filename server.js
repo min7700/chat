@@ -29,7 +29,7 @@ io.sockets.on('connection', function (socket) {
     else if(msg.type == "setUsername"){
       client.sadd("onlineUsers",msg.user);
       var tot = client.SMEMBERS("onlineUsers").length;
-      sub.publish("emrchat", JSON.stringify({type:"user joined", username:msg.user}, numUsers:tot));
+      sub.publish("emrchat", JSON.stringify({type:"user joined", username:msg.user, numUsers:tot}));
     }
   });
 
