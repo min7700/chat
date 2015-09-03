@@ -17,7 +17,7 @@ app.listen(port);
 //app.use(express.static(__dirname + '/public')); 
 
 function handler(req,res){
-    fs.readFile(__dirname + '/public', function(err,data){
+    fs.readFile(__dirname + '/public/index.html', function(err,data){
         if(err){
             res.writeHead(500);
             return res.end('Error loading index.html');
