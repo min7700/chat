@@ -37,4 +37,5 @@ io.sockets.on('connection', function (socket) {
       pub.quit();
       sub.publish("emrchat","User is disconnected : " + client.id);
   });
+  
 });
