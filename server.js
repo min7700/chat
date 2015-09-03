@@ -24,7 +24,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('message', function(msg) {
-      console.log(msg);
+      //console.log(msg);
       if(msg.type == "chat"){
         sub.publish("emrchat",msg.message);  
       }
