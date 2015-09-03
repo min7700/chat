@@ -34,9 +34,7 @@ io.sockets.on('connection', function (client) {
           pub.publish("chatting", msg.message);
       }
       else if(msg.type == "add user"){
-          // we store the username in the socket session for this client
-          socket.username = username;
-       
+      
           // add the client's username to the global list
           usernames[username] = username;
           ++numUsers;
