@@ -259,11 +259,11 @@ $(function() {
 
   // Whenever the server emits 'typing', show the typing message
   socket.on('typing', function (data) {
-    addChatTyping(data);
+    //addChatTyping(data);
   });
 
   // Whenever the server emits 'stop typing', kill the typing message
   socket.on('stop typing', function (data) {
-    removeChatTyping(data);
+    //removeChatTyping(data);
   });
 });
