@@ -19,44 +19,32 @@ function handler (req, res) {
   });
 }
 
-//If you are using RedisToGo with Heroku
-if (process.env.REDISTOGO_URL) {
-  var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-  var redis1 = require("redis").createClient(rtg.port, rtg.hostname);
-  var redis2 = require("redis").createClient(rtg.port, rtg.hostname);
-  var redis3 = require("redis").createClient(rtg.port, rtg.hostname);
+var pub = require("redis").createClient();
+var sub = require("redis").createClient();
+var client = require("redis").createClient();
 
-  redis1.auth(rtg.auth.split(":")[1]);
-  redis2.auth(rtg.auth.split(":")[1]);
-  redis3.auth(rtg.auth.split(":")[1]);
-} else {
-  //If you are using your own Redis server
-    var redis1 = require("redis").createClient();
-  var redis2 = require("redis").createClient();
-  var redis3 = require("redis").createClient();
-}
 
-io.sockets.on('connection', function (client) {
+io.sockets.on('connection', function (socket) {
   
-  redis1.subscribe("emrchat");
+  pub.subscribe("emrchat");
   
-    redis1.on("message", function(channel, message) {
-        client.send(message);
+    pub.on("message", function(channel, message) {
+        socket.send(message);
     });
 
-    client.on('message', function(msg) {
-    console.log(msg);
-    if(msg.type == "chat"){
-      redis2.publish("emrchat",msg.message);  
-    }
-    else if(msg.type == "setUsername"){
-      redis2.publish("emrchat", "A New User is connected : " + msg.user);
-      redis3.sadd("onlineUsers",msg.user);
-    }
+    socket.on('message', function(msg) {
+      console.log(msg);
+      if(msg.type == "chat"){
+        sub.publish("emrchat",msg.message);  
+      }
+      else if(msg.type == "setUsername"){
+        sub.publish("emrchat", "A New User is connected : " + msg.user);
+        client.sadd("onlineUsers",msg.user);
+      }
     });
 
     client.on('disconnect', function() {
-        redis1.quit();
-        redis2.publish("emrchat","User is disconnected : " + client.id);
+        pub.quit();
+        sub.publish("emrchat","User is disconnected : " + client.id);
     });
 });
