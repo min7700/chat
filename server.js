@@ -24,7 +24,7 @@ io.sockets.on('connection', function (client) {
   });
 
   client.on("message", function (msg) {
-      if(msg.type == "message"){
+      if(msg.type == "chat"){
           pub.publish("chatting",msg.message);
       }
       else if(msg.type == "add user"){

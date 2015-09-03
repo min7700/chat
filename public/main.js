@@ -65,7 +65,7 @@ $(function() {
       });
       // tell server to execute 'new message' and send along one parameter
 
-      var msg = {type:'message', message};
+      var msg = {type:'chat', message};
       socket.json.send(msg);    
     }
   }
@@ -225,8 +225,7 @@ $(function() {
     $inputMessage.focus();
   });
 
-  // Socket events
-
+  //## Socket events
   // Whenever the server emits 'login', log the login message
   socket.on('login', function (data) {
     connected = true;
