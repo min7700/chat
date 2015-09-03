@@ -1,3 +1,8 @@
+var redisInfo = {
+    host: '127.0.01',
+    port: 6379
+};
+
 var express = require('express')
   , app = express()
   , server = require('http').createServer(app)
@@ -10,42 +15,31 @@ server.listen(port);
  
 app.use(express.static(__dirname + '/public')); 
  
-//If you are using RedisToGo with Heroku
-if (process.env.REDISTOGO_URL) {
-  var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-  var redis1 = require("redis").createClient(rtg.port, rtg.hostname);
-  var redis2 = require("redis").createClient(rtg.port, rtg.hostname);
-  var redis3 = require("redis").createClient(rtg.port, rtg.hostname);
+//If you are using your own Redis server
+var store = require('stores');
+var pub = require("redis").createClient(redisInfo.port, redisInfo.host);
+var sub = require("redis").createClient(redisInfo.port, redisInfo.host);
+var client = require("redis").createClient(redisInfo.port, redisInfo.host);
 
-  redis1.auth(rtg.auth.split(":")[1]);
-  redis2.auth(rtg.auth.split(":")[1]);
-  redis3.auth(rtg.auth.split(":")[1]);
-} else {
-  //If you are using your own Redis server
-  var redis1 = require("redis").createClient();
-  var redis2 = require("redis").createClient();
-  var redis3 = require("redis").createClient();
-}
-
-io.sockets.on('connection', function (client) {
+io.sockets.on('connection', function (sockets) {
   redis1.subscribe("emrchat");
 
   redis1.on("message", function(channel, message) {
       console.log(channel + " || " + message);
-      client.send(message);
+      sockets.send(message);
   });
 
-  client.on('message', function(msg) {
+  sockets.on('message', function(msg) {
     redis2.publish("emrchat",message);
   });
 
-  client.on('add user', function(user) {
+  sockets.on('add user', function(user) {
     redis2.publish("emrchat", "A New User is connected : " + user);
     redis3.sadd("onlineUsers",user);
   });
 
-  client.on('disconnect', function() {
+  sockets.on('disconnect', function() {
     redis1.quit();
-    redis2.publish("emrchat","User is disconnected : " + client.id);
+    redis2.publish("emrchat","User is disconnected : " + sockets.id);
   });
 });
