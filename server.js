@@ -32,9 +32,8 @@ io.sockets.on('connection', function (socket) {
       var tot = 0;
       client.smembers("onlineUsers", function (err, replies) {
         if(!err){
-          callback(replies);
+          tot = replies.length;
         }
-        tot = replies.length;
       })
       sub.publish("emrchat", JSON.stringify({type:"user joined ", numUsers:tot, username:msg.user}));
     }
