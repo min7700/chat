@@ -32,12 +32,12 @@ io.sockets.on('connection', function (socket) {
       client.sadd("onlineUsers", msg.user);
 
       var returnNames = [];
-      client.smembers('onlineUsers').then(function(obj){
-        console.log(" | " + obj);
+      client.smembers('onlineUsers',function(err,obj){
+        returnNames = [obj];
       });
 
       //var tot = client.scard("onlineUsers");
-      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:returnNames, username:msg.user}));
+      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:returnNames.length, username:msg.user}));
     }
   });
 
