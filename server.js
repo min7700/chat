@@ -9,15 +9,15 @@ console.log("Listening on " + port);
 server.listen(port);
 
 app.use(express.static(__dirname + '/public')); 
+var redis = require("redis");
+var pub = redis.createClient();
+var sub = redis.createClient();
+var client = redis.createClient();
 
-var pub = require("redis").createClient();
-var sub = require("redis").createClient();
-var client = require("redis").createClient();
+pub.subscribe("emrchat");
 
 io.sockets.on('connection', function (socket) {
-  
-  pub.subscribe("emrchat");
-  
+ 
   pub.on("message", function(channel, message) {
     socket.send(message);
   });
@@ -29,6 +29,8 @@ io.sockets.on('connection', function (socket) {
     else if(msg.type == "setUsername"){
       client.sadd("onlineUsers", msg.user);
  
+      console.log(client.smembers("onlineUsers", redis.print));
+
       var getUser = function(callback){
         var users=[];
 
