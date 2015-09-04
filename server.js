@@ -31,10 +31,23 @@ io.sockets.on('connection', function (socket) {
     else if(msg.type == "setUsername"){
       client.sadd("onlineUsers", msg.user);
  
-      numUsers = (client.smembers("onlineUsers", redis)).length;
+      //numUsers = (client.smembers("onlineUsers", redis.print)).length;
+
+      var returnNames = [];
+      client.smembers('onlineUsers',function(err,obj){
+        async.each(obj,function(item){
+          client.hgetall(item,function(err,obj) {
+            Array.prototype.push.call(returnNames,obj);
+            console.log(returnNames);
+          })
+        },
+        function(err) {
+          console.log("error with redis1:"+err);
+        });
+      });
 
       //var tot = client.scard("onlineUsers");
-      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:numUsers, username:msg.user}));
+      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:returnNames, username:msg.user}));
     }
   });
 
