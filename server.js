@@ -33,7 +33,7 @@ io.sockets.on('connection', function (socket) {
 
       var returnNames = [];
       client.smembers('onlineUsers',function(err,obj){
-        returnNames = obj.split(',');
+        returnNames = returnNames.concat(obj);
       });
       numUsers = returnNames.length;
 
