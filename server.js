@@ -33,11 +33,16 @@ io.sockets.on('connection', function (socket) {
  
       //numUsers = (client.smembers("onlineUsers", redis.print)).length;
 
-      var returnNames = [];
+      /*var returnNames = [];
       client.smembers('onlineUsers',function(err,obj){
-        console.log(" | " obj);
+        console.log(obj);
+      });*/
+
+      redis.smembers('onlineUsers',function(err,obj){
+        console.log(obj);
       });
 
+      //var tot = client.scard("onlineUsers");
       sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:returnNames, username:msg.user}));
     }
   });
