@@ -31,7 +31,7 @@ io.sockets.on('connection', function (socket) {
     else if(msg.type == "setUsername"){
       client.sadd("onlineUsers", msg.user);
  
-      numUsers = (client.smembers("onlineUsers")).length;
+      numUsers = (client.smembers("onlineUsers", redis)).length;
 
       //var tot = client.scard("onlineUsers");
       sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:numUsers, username:msg.user}));
