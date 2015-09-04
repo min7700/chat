@@ -33,11 +33,12 @@ io.sockets.on('connection', function (socket) {
 
       var returnNames = [];
       client.smembers('onlineUsers',function(err,obj){
-        returnNames = [obj];
+        returnNames = obj.split(',');
       });
+      numUsers = returnNames.length;
 
       //var tot = client.scard("onlineUsers");
-      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:returnNames.length, username:msg.user}));
+      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:returnNames, username:msg.user}));
     }
   });
 
