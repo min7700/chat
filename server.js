@@ -34,9 +34,8 @@ io.sockets.on('connection', function (socket) {
       var returnNames = [];
       client.smembers('onlineUsers',function(err,obj){
         returnNames = returnNames.concat(obj);
-        console.log(returnNames);
       });
-      numUsers = returnNames.length;
+      numUsers = JSON.stringify(returnNames).length;
       console.log(numUsers);
 
       //var tot = client.scard("onlineUsers");
