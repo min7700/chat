@@ -37,6 +37,7 @@ io.sockets.on('connection', function (socket) {
       });
       numUsers = JSON.stringify(returnNames).length;
       console.log(numUsers);
+      console.log(JSON.stringify(returnNames));
 
       //var tot = client.scard("onlineUsers");
       sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:returnNames, username:msg.user}));
