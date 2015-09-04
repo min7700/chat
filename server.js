@@ -45,11 +45,11 @@ io.sockets.on('connection', function (socket) {
             client.hgetall(replies[key], function(err, reply){
               users[user.length]=reply;
 
-              if(–mutex==0){
+              if(mutex==0){
                 return users;
               }
 
-             });
+            });
           }
         });
       };
