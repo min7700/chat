@@ -9,11 +9,13 @@ console.log("Listening on " + port);
 server.listen(port);
 
 app.use(express.static(__dirname + '/public')); 
+
 var redis = require("redis");
 var pub = redis.createClient();
 var sub = redis.createClient();
 var client = redis.createClient();
 
+var numUsers = 0;
 pub.subscribe("emrchat");
 
 io.sockets.on('connection', function (socket) {
@@ -29,35 +31,10 @@ io.sockets.on('connection', function (socket) {
     else if(msg.type == "setUsername"){
       client.sadd("onlineUsers", msg.user);
  
-      console.log(client.smembers("onlineUsers", redis.print));
-
-      var getUser = function(callback){
-        var users=[];
-
-        client.smembers("onlineUsers", function(error, replies){
-          if(!replies || replies.length==0){
-            console.log("None");
-            return;
-          }
-
-          var mutex = replies.length;
-
-          for(var key in replies) {
-
-            client.hgetall(replies[key], function(err, reply){
-              users[user.length]=reply;
-
-              if(mutex==0){
-                return users;
-              }
-
-            });
-          }
-        });
-      };
+      numUsers = (client.smembers("onlineUsers", redis.print)).length;
 
       //var tot = client.scard("onlineUsers");
-      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:getUser, username:msg.user}));
+      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:numUsers, username:msg.user}));
     }
   });
 
