@@ -30,12 +30,15 @@ io.sockets.on('connection', function (socket) {
     }
     else if(msg.type == "setUsername"){
       client.sadd("onlineUsers", msg.user);
+ 
+      //numUsers = (client.smembers("onlineUsers", redis.print)).length;
 
-      redis.smembers('onlineUsers',function(err, obj){
-        numUsers = obj.length;
+      var returnNames = [];
+      client.smembers('onlineUsers',function(err,obj){
+        console.log(" | " obj);
       });
 
-      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:numUsers, username:msg.user}));
+      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:returnNames, username:msg.user}));
     }
   });
 
