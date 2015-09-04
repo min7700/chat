@@ -35,15 +35,11 @@ io.sockets.on('connection', function (socket) {
 
       var returnNames = [];
       client.smembers('onlineUsers',function(err,obj){
-        async.each(obj,function(item){
-          client.hgetall(item,function(err,obj) {
-            Array.prototype.push.call(returnNames,obj);
-            console.log(returnNames);
-          })
-        },
-        function(err) {
-          console.log("error with redis1:"+err);
-        });
+        console.log(obj);
+      });
+
+      redis.smembers('onlineUsers',function(err,obj){
+        console.log(obj);
       });
 
       //var tot = client.scard("onlineUsers");
