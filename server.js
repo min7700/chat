@@ -29,8 +29,33 @@ io.sockets.on('connection', function (socket) {
     else if(msg.type == "setUsername"){
       client.sadd("onlineUsers", msg.user);
  
-      var tot = client.scard("onlineUsers");
-      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:tot, username:msg.user}));
+      var getUser = function(callback){
+        var users=[];
+
+        redis.smembers(“users”, function(error, replies){
+          if(!replies || replies.length==0){
+            console.log("None");
+            return;
+          }
+
+          var mutex = replies.length;
+
+          for(var key in replies) {
+
+            redis.hgetall(replies[key], function(err, reply){
+              users[user.length]=reply;
+
+              if(–mutex==0){
+                return users;
+              }
+
+             });
+          }
+        });
+      };
+
+      //var tot = client.scard("onlineUsers");
+      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:getUser, username:msg.user}));
     }
   });
 
