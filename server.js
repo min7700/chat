@@ -32,7 +32,7 @@ io.sockets.on('connection', function (socket) {
       var getUser = function(callback){
         var users=[];
 
-        redis.smembers(“users”, function(error, replies){
+        client.smembers("onlineUsers", function(error, replies){
           if(!replies || replies.length==0){
             console.log("None");
             return;
@@ -42,7 +42,7 @@ io.sockets.on('connection', function (socket) {
 
           for(var key in replies) {
 
-            redis.hgetall(replies[key], function(err, reply){
+            client.hgetall(replies[key], function(err, reply){
               users[user.length]=reply;
 
               if(–mutex==0){
