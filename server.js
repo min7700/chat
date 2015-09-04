@@ -32,7 +32,7 @@ io.sockets.on('connection', function (socket) {
       client.sadd("onlineUsers", msg.user);
 
       var returnNames = [];
-      client.smembers('onlineUsers').then(function(err,obj){
+      client.smembers('onlineUsers').then(function(obj){
         console.log(" | " + obj);
       });
 
