@@ -239,7 +239,7 @@ $(function() {
         log(message, {
           prepend: true
         });
-        addParticipantsMessage(data);
+        addParticipantsMessage(msg);
       } else {
         log(msg.username + ' joined');
         addParticipantsMessage(msg);
