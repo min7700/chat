@@ -19,6 +19,10 @@ var returnNames = [];
 var numUsers = 0;
 pub.subscribe("emrchat");
 
+var callback=function(res){
+    numUsers= res.length;
+};
+
 io.sockets.on('connection', function (socket) {
  
   pub.on("message", function(channel, message) {
@@ -50,7 +54,3 @@ io.sockets.on('connection', function (socket) {
   });
 
 });
-
-var callback=function(res){
-    numUsers= res.length;
-};
