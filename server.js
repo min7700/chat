@@ -15,6 +15,7 @@ var pub = redis.createClient();
 var sub = redis.createClient();
 var client = redis.createClient();
 
+var returnNames = [];
 var numUsers = 0;
 pub.subscribe("emrchat");
 
@@ -31,17 +32,15 @@ io.sockets.on('connection', function (socket) {
     else if(msg.type == "setUsername"){
       client.sadd("onlineUsers", msg.user);
 
-      var returnNames = [];
-      client.smembers('onlineUsers',function(err,obj){
-        returnNames = returnNames.concat(obj);
-
-        console.log(returnNames.length);
-        numUsers = JSON.stringify(returnNames).length;
-        console.log(numUsers);
+      
+      client.smembers('onlineUsers',function(err, obj){
+        if(!err){
+            callback(obj);
+        }
       });
 
       //var tot = client.scard("onlineUsers");
-      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:returnNames, username:msg.user}));
+      sub.publish("emrchat", JSON.stringify({type:"user joined", numUsers:numUsers, username:msg.user}));
     }
   });
 
@@ -51,3 +50,7 @@ io.sockets.on('connection', function (socket) {
   });
 
 });
+
+var callback=function(res){
+    numUsers= res.length;
+};
